@@ -5,7 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using MyPlaces.Data.EfCore;
+using MyPlaces.Data.Entities;
+using MyPlaces.Data.Repositories;
 
 namespace MyPlaces
 {
@@ -22,6 +25,9 @@ namespace MyPlaces
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddControllers();
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -36,6 +42,20 @@ namespace MyPlaces
             // ASP.NET Core middleware for EF Core error pages,
             // especially useful to detect and diagnose errors with EF Core migrations:
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddTransient<IRepository<City>>((sp) =>
+            {
+                return new CityRepository(
+                    sp.GetRequiredService<MyPlacesDbContext>(),
+                    sp.GetRequiredService<ILogger<CityRepository>>());
+            });
+
+            services.AddTransient<IRepository<GMPlace>>((sp) =>
+            {
+                return new GMPlaceRepository(
+                    sp.GetRequiredService<MyPlacesDbContext>(),
+                    sp.GetRequiredService<ILogger<GMPlaceRepository>>());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MyPlaces.Data.EfCore;
+using MyPlaces.Data.Entities;
 using System;
 
 namespace MyPlaces
@@ -34,7 +35,12 @@ namespace MyPlaces
             try
             {
                 var dbContext = services.GetRequiredService<MyPlacesDbContext>();
+                
                 dbContext.Database.Migrate();
+
+                var databaseSeederLogger = services.GetRequiredService<ILogger<MyPlacesDbContext>>();
+
+                DatabaseSeeder.Seed(dbContext, databaseSeederLogger);
             }
             catch (Exception ex)
             {
