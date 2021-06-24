@@ -52,7 +52,7 @@ namespace MyPlaces.Data.Repositories
                 throw new Exception("Cannot get GMPlace with Id equal to an empty GUID");
             }
 
-            var entity = await _db.FindAsync<GMPlace>(new[] { id.ToString() }, cancellationToken);
+            var entity = await _db.FindAsync<GMPlace>(new object[] { id }, cancellationToken);
 
             if (entity == null)
             {

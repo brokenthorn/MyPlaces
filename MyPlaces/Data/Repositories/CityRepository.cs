@@ -52,7 +52,7 @@ namespace MyPlaces.Data.Repositories
                 throw new Exception("Cannot get City with Id equal to an empty GUID");
             }
 
-            var entity = await _db.FindAsync<City>(new[] { id.ToString() }, cancellationToken);
+            var entity = await _db.FindAsync<City>(new object[] { id }, cancellationToken);
 
             if (entity == null)
             {
