@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,7 +10,7 @@ namespace MyPlaces.Data.Repositories
     {
         Task<TEntity> Add(TEntity entity, CancellationToken cancellationToken = default);
         Task<TEntity> Get(Guid id, CancellationToken cancellationToken = default);
-        Task<ICollection<TEntity>> GetAll(CancellationToken cancellationToken = default);
+        Task<IEnumerable<TEntity>> GetAll(CancellationToken cancellationToken = default);
         Task<TEntity> Update(TEntity entity, CancellationToken cancellationToken = default);
         Task Delete(Guid id, CancellationToken cancellationToken = default);
         Task Delete(TEntity entity, CancellationToken cancellationToken = default);

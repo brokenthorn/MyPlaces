@@ -66,7 +66,7 @@ namespace MyPlaces.Data.Repositories
             return entity;
         }
 
-        public async Task<ICollection<City>> GetAll(CancellationToken cancellationToken)
+        public async Task<IEnumerable<City>> GetAll(CancellationToken cancellationToken)
         {
             var cities = await _db.Cities.ToListAsync(cancellationToken);
 

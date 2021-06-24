@@ -66,7 +66,7 @@ namespace MyPlaces.Data.Repositories
             return entity;
         }
 
-        public async Task<ICollection<GMPlace>> GetAll(CancellationToken cancellationToken)
+        public async Task<IEnumerable<GMPlace>> GetAll(CancellationToken cancellationToken)
         {
             var gmPlaces = await _db.GMPlaces.ToListAsync(cancellationToken);
 
