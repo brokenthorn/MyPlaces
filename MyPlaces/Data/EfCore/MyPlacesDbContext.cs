@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyPlaces.Data.Models;
+using MyPlaces.Data.Entities;
 
 namespace MyPlaces.Data.EfCore
 {
     public class MyPlacesDbContext : DbContext
     {
         public DbSet<City> Cities { get; set; }
+        public DbSet<GMPlace> GMPlaces { get; set; }
 
         public MyPlacesDbContext(DbContextOptions<MyPlacesDbContext> options)
             : base(options)
@@ -23,8 +24,8 @@ namespace MyPlaces.Data.EfCore
                 e.Property(p => p.Id).ValueGeneratedNever();
                 e.Property(p => p.Name).HasMaxLength(100);
 
-                e.Property(p => p.Latitude).HasPrecision(10, 8);
-                e.Property(p => p.Longitude).HasPrecision(11, 8);
+                e.Property(p => p.Longitude).HasPrecision(16, 13);
+                e.Property(p => p.Latitude).HasPrecision(16, 14);
 
                 e.HasMany<GMPlace>(p => p.GMPlaces).WithOne(place => place.City);
             });
@@ -35,6 +36,9 @@ namespace MyPlaces.Data.EfCore
 
                 e.Property(p => p.Id).ValueGeneratedNever();
                 e.Property(p => p.Name).HasMaxLength(100);
+
+                e.Property(p => p.Longitude).HasPrecision(16, 13);
+                e.Property(p => p.Latitude).HasPrecision(16, 14);
             });
         }
     }
