@@ -11,7 +11,10 @@ export class PlacesComponent implements OnInit {
   constructor(private placesService: PlacesService) { }
 
   ngOnInit() {
-    this.placesService.refreshAll();
+    this.refreshAll();
   }
 
+  public refreshAll() {
+    this.placesService.refreshAll();
+  }
 }
