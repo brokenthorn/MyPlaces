@@ -1,0 +1,6 @@
+div.google-map {
+  resize: vertical;
+  min-height: 25vh;
+  height: 50vh;
+  max-height: 100vh;
+}

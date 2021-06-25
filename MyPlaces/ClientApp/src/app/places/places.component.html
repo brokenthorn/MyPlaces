@@ -2,8 +2,78 @@
   <div class="col">
     <h2>Places</h2>
   </div>
-  <div class="col col-auto">
-    <button class="btn btn-sm btn-primary" (click)="refreshAll()">Refresh all</button>
+  <div class="col-auto">
+    <div class="btn-group" role="group">
+      <button class="btn btn-primary">Adauga</button>
+      <button class="btn btn-success"
+              (click)="refreshAll()"
+              [attr.disabled]="isRefreshing ? true : undefined">
+        {{ isRefreshing ? 'Refreshing...' : 'Refresh' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <label for="city">Oras</label>
+    <div class="input-group mb-3">
+      <select *ngIf="cities.length > 0 else noCitiesLoaded"
+              [ngModel]="selectedCity"
+              (ngModelChange)="onSelectedCityChange($event)"
+              class="form-control"
+              id="city">
+        <option *ngFor="let c of cities" [ngValue]="c">{{ c.name }}</option>
+      </select>
+      <ng-template #noCitiesLoaded>
+        <select class="form-control" id="city">
+          <option selected>Nici un oras</option>
+        </select>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <label for="placesSearchInput">Locatii</label>
+    <div class="input-group mb-1">
+      <div class="input-group-prepend">
+        <span class="input-group-text">&#x2315;</span>
+      </div>
+      <input class="form-control"
+             type="text"
+             id="placesSearchInput"
+             name="placesSearchInput"
+             placeholder="Cauta locatii..."
+             [attr.disabled]="places.length > 0 ? undefined : true" />
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <div class="input-group mb-3">
+      <select *ngIf="places.length > 0 else noPlacesLoaded"
+              [ngModel]="selectedPlace"
+              (ngModelChange)="onSelectedPlaceChange($event)"
+              size="4"
+              class="form-control"
+              id="place">
+        <option *ngFor="let p of places" [ngValue]="p">{{ p.name }}</option>
+      </select>
+      <ng-template #noPlacesLoaded>
+        <select class="form-control" id="place">
+          <option selected>Nici o locatie</option>
+        </select>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <div class="mb-3 google-map" #googleMap></div>
   </div>
 </div>
 
