@@ -1,10 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Routes, RouterModule } from '@angular/router';
-
+import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { PlacesService } from '../services/places.service';
 import { PlacesRoutingModule } from './places-routing.module';
 import { PlacesComponent } from './places.component';
-import { PlacesService } from '../services/places.service';
+
 
 const routes: Routes = [
   { path: '', component: PlacesComponent }
@@ -15,6 +17,8 @@ const routes: Routes = [
   imports: [
     CommonModule,
     PlacesRoutingModule,
+    FormsModule,
+    HttpClientModule,
     RouterModule.forChild(routes)
   ],
   providers: [PlacesService]
