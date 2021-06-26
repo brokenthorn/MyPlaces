@@ -2,6 +2,7 @@
 
 namespace MyPlaces.Data.Models
 {
+    // TODO: Refactor from exposing the EF entities directly in the API to using GMPlaceDto!
     public class GMPlaceDto
     {
         public Guid Id { get; init; }

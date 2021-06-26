@@ -9,19 +9,25 @@ import { PlacesService } from '../services/places.service';
   styleUrls: ['./places.component.css']
 })
 export class PlacesComponent implements OnInit, AfterViewInit {
-  @ViewChild('googleMapDiv') mapDiv: ElementRef<HTMLDivElement>;
-  private gMap: google.maps.Map;
+  private static readonly ZoomToCityLevel = 10;
 
   // WARNING: Remember to restrict the origin of API calls for this API key, otherwise unwanted charges could be incurred!
-  private static loader = new Loader({
-    apiKey: "AIzaSyDygzHfAI2-uBpKKHKZu-q8ucqOCx1sokU",
-    version: "weekly"
+  private static readonly loader = new Loader({
+    apiKey: 'AIzaSyDygzHfAI2-uBpKKHKZu-q8ucqOCx1sokU',
+    version: 'weekly',
+    language: 'ro',
+    libraries: ['places']
   });
+
+  @ViewChild('googleMapDiv') mapDiv: ElementRef<HTMLDivElement>;
+  private gMap: google.maps.Map;
+  private gPlacesService: google.maps.places.PlacesService;
+  private gMarkers: google.maps.Marker[] = [];
 
   isRefreshing: boolean = false;
 
-  selectedCity: ICityDto | null = null;
-  selectedPlace: IGMPlaceDto | null = null;
+  selectedCity: ICityDto;
+  selectedPlace: IGMPlaceDto;
 
   cities: ICityDto[] = [];
   places: IGMPlaceDto[] = [];
@@ -35,7 +41,8 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     PlacesComponent.loader.load().then(
       () => {
-        this.gMap = new google.maps.Map(this.mapDiv.nativeElement, { zoom: 10 });
+        this.gMap = new google.maps.Map(this.mapDiv.nativeElement, { zoom: PlacesComponent.ZoomToCityLevel });
+        this.gPlacesService = new google.maps.places.PlacesService(this.gMap);
 
         const uluru = { lat: -25.344, lng: 131.036 };
 
@@ -47,13 +54,13 @@ export class PlacesComponent implements OnInit, AfterViewInit {
             };
 
             this.gMap.setCenter(coords);
-            new google.maps.Marker({ position: coords, map: this.gMap });
+            this.createMapMarker(coords);
           },
           (geolocationError) => {
             console.error('The user did not approve getting his location, the map will focus on a default location.', geolocationError);
 
             this.gMap.setCenter(uluru);
-            new google.maps.Marker({ position: uluru, map: this.gMap });
+            this.createMapMarker(uluru);
           });
       },
       (reason) => {
@@ -63,7 +70,8 @@ export class PlacesComponent implements OnInit, AfterViewInit {
             <p>${reason}</p>
           </div>
         `;
-      }).catch(reason => {
+      })
+      .catch(reason => {
         this.mapDiv.nativeElement.innerHTML = `
         <div class="alert alert-danger" role="alert">
           <p>Eroare la incarcarea hartii Google Maps:</p>
@@ -71,6 +79,19 @@ export class PlacesComponent implements OnInit, AfterViewInit {
         </div>
         `;
       });
+  }
+
+  private createMapMarker(pos: google.maps.LatLngLiteral | google.maps.LatLng) {
+    if (this.gMap != null) {
+      this.gMarkers.push(new google.maps.Marker({ position: pos, map: this.gMap }));
+    } else {
+      console.warn('Cannot create a map marker, no Google Map loaded');
+    }
+  }
+
+  private clearMapMarkers() {
+    this.gMarkers.forEach(marker => marker.setMap(null));
+    this.gMarkers.splice(0, this.gMarkers.length);
   }
 
   refreshAll() {
@@ -81,13 +102,28 @@ export class PlacesComponent implements OnInit, AfterViewInit {
 
       this.cities = this.placesService.cities;
       this.places = this.placesService.gmPlaces;
-
-      this.selectedCity = this.cities[0];
     });
   }
 
   onSelectedCityChange(selectedCity: ICityDto) {
     this.selectedCity = selectedCity;
+    this.selectedPlace = null;
+
+    this.clearMapMarkers();
+
+    this.gPlacesService.findPlaceFromQuery(
+      { query: this.selectedCity.name, fields: ['name', 'geometry'] },
+      (results, status) => {
+        console.log('Show search results on the map');
+
+        if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+          for (let i = 0; i < results.length; i++) {
+            this.createMapMarker(results[i].geometry.location);
+          }
+          this.gMap.setCenter(results[0].geometry.location);
+        }
+      }
+    );
   }
 
   onSelectedPlaceChange(selectedPlace: IGMPlaceDto) {

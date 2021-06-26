@@ -23,6 +23,7 @@
               (ngModelChange)="onSelectedCityChange($event)"
               class="form-control"
               id="city">
+        <option [ngValue]="undefined" disabled>Alege un oras</option>
         <option *ngFor="let c of cities" [ngValue]="c">{{ c.name }}</option>
       </select>
       <ng-template #noCitiesLoaded>

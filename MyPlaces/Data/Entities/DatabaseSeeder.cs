@@ -28,6 +28,14 @@ namespace MyPlaces.Data.Entities
                     Longitude=28.804494130291598M,
                     GMPlaces = new List<GMPlace>(0)
                 },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Sector 1, București, România",
+                    Latitude=44.49154016216607M,
+                    Longitude=26.05153936544157M,
+                    GMPlaces = new List<GMPlace>(0)
+                },
             };
 
             db.AddRange(cities);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace MyPlaces.Data.Models
 {
+    // TODO: Refactor from exposing the EF entities directly in the API to using CityDto!
     public class CityDto
     {
         public Guid Id { get; init; }
