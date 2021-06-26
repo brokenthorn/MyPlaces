@@ -9,7 +9,8 @@ import { PlacesService } from '../services/places.service';
   styleUrls: ['./places.component.css']
 })
 export class PlacesComponent implements OnInit, AfterViewInit {
-  @ViewChild('googleMap') map: ElementRef<HTMLDivElement>;
+  @ViewChild('googleMapDiv') mapDiv: ElementRef<HTMLDivElement>;
+  private gMap: google.maps.Map;
 
   // WARNING: Remember to restrict the origin of API calls for this API key, otherwise unwanted charges could be incurred!
   private static loader = new Loader({
@@ -32,23 +33,44 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    console.log('Map is set to', this.map);
+    PlacesComponent.loader.load().then(
+      () => {
+        this.gMap = new google.maps.Map(this.mapDiv.nativeElement, { zoom: 10 });
 
-    // The location of Uluru
-    const uluru = { lat: -25.344, lng: 131.036 };
+        const uluru = { lat: -25.344, lng: 131.036 };
 
-    PlacesComponent.loader.load().then(() => {
-      let googleMap = new google.maps.Map(this.map.nativeElement, {
-        center: uluru,
-        zoom: 4,
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const coords: google.maps.LatLngLiteral = {
+              lat: pos.coords.latitude,
+              lng: pos.coords.longitude
+            };
+
+            this.gMap.setCenter(coords);
+            new google.maps.Marker({ position: coords, map: this.gMap });
+          },
+          (geolocationError) => {
+            console.error('The user did not approve getting his location, the map will focus on a default location.', geolocationError);
+
+            this.gMap.setCenter(uluru);
+            new google.maps.Marker({ position: uluru, map: this.gMap });
+          });
+      },
+      (reason) => {
+        this.mapDiv.nativeElement.innerHTML = `
+          <div class="alert alert-danger" role="alert">
+            <p>Nu s-a putut incarca harta Google Maps:</p>
+            <p>${reason}</p>
+          </div>
+        `;
+      }).catch(reason => {
+        this.mapDiv.nativeElement.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+          <p>Eroare la incarcarea hartii Google Maps:</p>
+          <p>${reason}</p>
+        </div>
+        `;
       });
-
-      // The marker, positioned at Uluru
-      const marker = new google.maps.Marker({
-        position: uluru,
-        map: googleMap,
-      });
-    });
   }
 
   refreshAll() {

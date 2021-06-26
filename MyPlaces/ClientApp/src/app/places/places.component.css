@@ -1,6 +1,11 @@
 div.google-map {
+  border: 1px solid #aeaeae;
   resize: vertical;
-  min-height: 25vh;
-  height: 50vh;
-  max-height: 100vh;
+  min-height: 250px;
+  height: 250px;
+  min-width: 100%;
+  margin-bottom: 1rem !important;
+  /* this calc maintains the same margin at the top as on the bottom when resizing to max height (100vh): */
+  max-height: calc(100vh - 2rem);
+  max-width: 100%;
 }

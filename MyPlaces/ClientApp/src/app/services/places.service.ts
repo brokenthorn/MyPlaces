@@ -39,7 +39,6 @@ export class PlacesService {
       this.cities = value.cities;
 
       console.log('Refreshing all data in PlacesService completed.');
-      console.log('Refreshing all data in PlacesService returned this value:', value);
 
       if (done != null) done();
     }, error => {
