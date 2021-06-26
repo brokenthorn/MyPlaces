@@ -74,7 +74,17 @@
 
 <div class="row">
   <div class="col">
-    <div class="google-map" #googleMapDiv></div>
+    <div class="d-flex flex-column" style="max-height: calc(100vh - 1em);">
+      <div #googleMapDiv class="google-map flex-grow-1" [ngClass]="isMaximized ? 'vh-100' : undefined"></div>
+      <p class="mt-1 mb-3" style="line-height: 0.8em !important">
+        <em>
+          <small>
+            Poti redimensiona harta din coltul din dreapta jos.
+            <u class="text-nowrap" (click)="toggleMapSize()">Click aici pentru comutare maximizare.</u>
+          </small>
+        </em>
+      </p>
+    </div>
   </div>
 </div>
 

@@ -33,6 +33,7 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   places: IGMPlaceDto[] = [];
 
   showAddEditCityModal: boolean = false;
+  isMaximized: boolean = false;
 
   constructor(private placesService: PlacesService) { }
 
@@ -133,7 +134,10 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   }
 
   onAddCityClick() {
-    console.log('Showing add-edit city modal');
     this.showAddEditCityModal = true;
+  }
+
+  toggleMapSize() {
+    this.isMaximized = !this.isMaximized;
   }
 }

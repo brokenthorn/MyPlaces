@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ICityDto } from '../../../../models';
 
 @Component({
@@ -6,12 +6,9 @@ import { ICityDto } from '../../../../models';
   templateUrl: './add-edit-city-modal.component.html',
   styleUrls: ['./add-edit-city-modal.component.css']
 })
-export class AddEditCityModalComponent implements OnInit {
+export class AddEditCityModalComponent {
   @Input() city?: ICityDto;
   @Input() modalId: string = "modal";
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 }
