@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { PlacesService } from '../services/places.service';
 import { PlacesRoutingModule } from './places-routing.module';
 import { PlacesComponent } from './places.component';
+import { AddEditCityModalComponent } from './components/add-edit-city-modal/add-edit-city-modal.component';
 
 
 const routes: Routes = [
@@ -13,7 +14,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [PlacesComponent],
+  declarations: [PlacesComponent, AddEditCityModalComponent],
   imports: [
     CommonModule,
     PlacesRoutingModule,

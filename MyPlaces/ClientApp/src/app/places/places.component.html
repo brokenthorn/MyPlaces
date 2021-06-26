@@ -4,7 +4,7 @@
   </div>
   <div class="col-auto">
     <div class="btn-group" role="group">
-      <button class="btn btn-primary">Adauga</button>
+      <button class="btn btn-primary" data-toggle="modal" data-target="#addEditCityModal">Adauga</button>
       <button class="btn btn-success"
               (click)="refreshAll()"
               [attr.disabled]="isRefreshing ? true : undefined">
@@ -78,3 +78,6 @@
   </div>
 </div>
 
+<app-add-edit-city-modal [city]="selectedCity"
+                         [modalId]="'addEditCityModal'">
+</app-add-edit-city-modal>

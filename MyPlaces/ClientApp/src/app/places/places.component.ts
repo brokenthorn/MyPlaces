@@ -32,6 +32,8 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   cities: ICityDto[] = [];
   places: IGMPlaceDto[] = [];
 
+  showAddEditCityModal: boolean = false;
+
   constructor(private placesService: PlacesService) { }
 
   ngOnInit(): void {
@@ -128,5 +130,10 @@ export class PlacesComponent implements OnInit, AfterViewInit {
 
   onSelectedPlaceChange(selectedPlace: IGMPlaceDto) {
     this.selectedPlace = selectedPlace;
+  }
+
+  onAddCityClick() {
+    console.log('Showing add-edit city modal');
+    this.showAddEditCityModal = true;
   }
 }
