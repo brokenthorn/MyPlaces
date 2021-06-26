@@ -103,12 +103,13 @@ export class PlacesComponent implements OnInit, AfterViewInit {
     this.placesService.refreshAll(() => {
       this.isRefreshing = false;
 
+      // this sets by reference so use the service to add/remove items!
       this.cities = this.placesService.cities;
       this.places = this.placesService.gmPlaces;
     });
   }
 
-  onSelectedCityChange(selectedCity: ICityDto) {
+  selectCity(selectedCity: ICityDto) {
     this.selectedCity = selectedCity;
     this.selectedPlace = null;
 
@@ -129,7 +130,7 @@ export class PlacesComponent implements OnInit, AfterViewInit {
     );
   }
 
-  onSelectedPlaceChange(selectedPlace: IGMPlaceDto) {
+  selectPlace(selectedPlace: IGMPlaceDto) {
     this.selectedPlace = selectedPlace;
   }
 
@@ -139,5 +140,16 @@ export class PlacesComponent implements OnInit, AfterViewInit {
 
   toggleMapSize() {
     this.isMaximized = !this.isMaximized;
+  }
+
+  addNewCity(city: ICityDto) {
+    this.placesService.addCity(city, (newCity, error) => {
+      if (!newCity) {
+        alert(`Nu am putut salva orasul: ${error}`);
+      }
+      else {
+        this.selectCity(newCity);
+      }
+    });
   }
 }

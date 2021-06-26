@@ -20,7 +20,7 @@
     <div class="input-group mb-3">
       <select *ngIf="cities.length > 0 else noCitiesLoaded"
               [ngModel]="selectedCity"
-              (ngModelChange)="onSelectedCityChange($event)"
+              (ngModelChange)="selectCity($event)"
               class="form-control"
               id="city">
         <option [ngValue]="undefined" disabled>Alege un oras</option>
@@ -57,7 +57,7 @@
     <div class="input-group mb-3">
       <select *ngIf="places.length > 0 else noPlacesLoaded"
               [ngModel]="selectedPlace"
-              (ngModelChange)="onSelectedPlaceChange($event)"
+              (ngModelChange)="selectPlace($event)"
               size="4"
               class="form-control"
               id="place">
@@ -79,8 +79,8 @@
       <p class="mt-1 mb-3" style="line-height: 0.8em !important">
         <em>
           <small>
-            Poti redimensiona harta din coltul din dreapta jos.
-            <u class="text-nowrap" (click)="toggleMapSize()">Click aici pentru comutare maximizare.</u>
+            Poti redimensiona harta din coltul din dreapta jos cand nu e maximizata.
+            <u class="text-nowrap" (click)="toggleMapSize()">Click aici pentru {{ isMaximized ? 'minimizare' : 'maximizare' }}.</u>
           </small>
         </em>
       </p>
@@ -89,5 +89,6 @@
 </div>
 
 <app-add-edit-city-modal [city]="selectedCity"
-                         [modalId]="'addEditCityModal'">
+                         [modalId]="'addEditCityModal'"
+                         (save)="addNewCity($event)">
 </app-add-edit-city-modal>
