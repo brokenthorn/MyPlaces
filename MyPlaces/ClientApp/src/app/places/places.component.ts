@@ -1,7 +1,10 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Loader} from '@googlemaps/js-api-loader';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ICityDto, IGMPlaceDto} from '../../models';
 import {PlacesService} from '../services/places.service';
+import {v4} from 'uuid';
+import {AddEditCityModalContentComponent} from './components/add-edit-city-modal/add-edit-city-modal-content.component';
 
 @Component({
   selector: 'app-places',
@@ -20,18 +23,22 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   });
 
   @ViewChild('googleMapDiv') mapDiv: ElementRef<HTMLDivElement>;
+
   isRefreshing = false;
-  selectedCity: ICityDto;
-  selectedPlace: IGMPlaceDto;
-  cities: ICityDto[] = [];
-  places: IGMPlaceDto[] = [];
   showAddEditCityModal = false;
   isMaximized = false;
+
+  selectedCity: ICityDto;
+  selectedPlace: IGMPlaceDto;
+
+  cities: ICityDto[] = [];
+  places: IGMPlaceDto[] = [];
+
   private gMap: google.maps.Map;
   private gPlacesService: google.maps.places.PlacesService;
   private gMarkers: google.maps.Marker[] = [];
 
-  constructor(private placesService: PlacesService) {
+  constructor(private placesService: PlacesService, private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
@@ -69,7 +76,7 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   }
 
   private resetMapPositionToDefault() {
-    const uluru = { lat: -25.344, lng: 131.036 };
+    const uluru = {lat: -25.344, lng: 131.036};
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -139,7 +146,7 @@ export class PlacesComponent implements OnInit, AfterViewInit {
     this.isMaximized = !this.isMaximized;
   }
 
-  addNewCity(city: ICityDto) {
+  private addNewCity(city: ICityDto) {
     this.placesService.addCity(city, (newCity, error) => {
       if (!newCity) {
         alert(`Nu am putut salva orașul: ${error}`);
@@ -149,7 +156,7 @@ export class PlacesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  updateCity(city: ICityDto) {
+  private updateCity(city: ICityDto) {
     this.placesService.updateCity(city, (updatedCity, error) => {
       if (!updatedCity) {
         alert(`Nu am putut actualiza orașul: ${error}`);
@@ -157,6 +164,15 @@ export class PlacesComponent implements OnInit, AfterViewInit {
         this.selectCity(updatedCity);
       }
     });
+  }
+
+  onModalSave(city: ICityDto) {
+    if (city.id === '') {
+      city.id = v4();
+      this.addNewCity(city);
+    } else {
+      this.updateCity(city);
+    }
   }
 
   private createMapMarker(pos: google.maps.LatLngLiteral | google.maps.LatLng) {
@@ -169,6 +185,17 @@ export class PlacesComponent implements OnInit, AfterViewInit {
 
   private clearMapMarkers() {
     this.gMarkers.forEach(marker => marker.setMap(null));
-    this.gMarkers.splice(0, this.gMarkers.length);
+    this.gMarkers.length = 0;
+  }
+
+  showModalForAdd() {
+    const modalRef = this.modalService.open(AddEditCityModalContentComponent);
+    modalRef.componentInstance.title = 'Oraș nou';
+  }
+
+  showModalForEdit() {
+    const modalRef = this.modalService.open(AddEditCityModalContentComponent);
+    modalRef.componentInstance.title = this.selectedCity.name;
+    modalRef.componentInstance.city = this.selectedCity;
   }
 }

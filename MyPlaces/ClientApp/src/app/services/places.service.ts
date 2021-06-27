@@ -75,8 +75,7 @@ export class PlacesService {
       if (done != null) {
         done(null, `City with ID=${city.id} not found locally so will not update it. Try refreshing the local cache and try again.`);
       }
-    }
-    else {
+    } else {
       this.http.put(`/api/cities/${city.id}`, city).subscribe(() => {
         this.cities.splice(foundAtIndex, 1, city);
 

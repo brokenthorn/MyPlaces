@@ -4,10 +4,8 @@
   </div>
   <div class="col-auto p-0">
     <div class="btn-group btn-group-sm" role="group">
-      <button class="btn btn-primary" data-target="#addEditCityModal" data-toggle="modal">Adaugă</button>
-      <button [disabled]="!selectedCity" class="btn btn-secondary" data-target="#addEditCityModal" data-toggle="modal">
-        Editează
-      </button>
+      <button class="btn btn-primary" (click)="showModalForAdd()">Adaugă</button>
+      <button [disabled]="!selectedCity" class="btn btn-secondary" (click)="showModalForEdit()">Editează</button>
     </div>
   </div>
   <div class="col-auto">
@@ -93,9 +91,3 @@
     </div>
   </div>
 </div>
-
-<app-add-edit-city-modal (save)="addNewCity($event)"
-                         (update)="updateCity($event)"
-                         [city]="selectedCity"
-                         [modalId]="'addEditCityModal'">
-</app-add-edit-city-modal>

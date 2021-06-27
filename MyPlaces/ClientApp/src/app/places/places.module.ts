@@ -3,10 +3,11 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {RouterModule, Routes} from '@angular/router';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {PlacesService} from '../services/places.service';
+import {AddEditCityModalContentComponent} from './components/add-edit-city-modal/add-edit-city-modal-content.component';
 import {PlacesRoutingModule} from './places-routing.module';
 import {PlacesComponent} from './places.component';
-import {AddEditCityModalComponent} from './components/add-edit-city-modal/add-edit-city-modal.component';
 
 
 const routes: Routes = [
@@ -14,11 +15,12 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [PlacesComponent, AddEditCityModalComponent],
+  declarations: [PlacesComponent, AddEditCityModalContentComponent],
   imports: [
     CommonModule,
     PlacesRoutingModule,
     FormsModule,
+    NgbModule,
     HttpClientModule,
     RouterModule.forChild(routes)
   ],
