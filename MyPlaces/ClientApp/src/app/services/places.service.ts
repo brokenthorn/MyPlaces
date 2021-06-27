@@ -52,7 +52,7 @@ export class PlacesService {
     });
   }
 
-  public addCity(city: ICityDto, done: ((city: ICityDto, error: any) => void) = null) {
+  public addCity(city: ICityDto, done: ((addedCity: ICityDto, error: any) => void) = null) {
     this.http.post<ICityDto>('/api/cities', city).subscribe(responseCity => {
       this.cities.push(responseCity);
 
@@ -68,7 +68,7 @@ export class PlacesService {
     });
   }
 
-  public updateCity(city: ICityDto, done: ((city: ICityDto, error: any) => void) = null) {
+  public updateCity(city: ICityDto, done: ((updatedCity: ICityDto, error: any) => void) = null) {
     const foundAtIndex = this.cities.findIndex(c => c.id === city.id);
 
     if (foundAtIndex === -1) {
@@ -84,6 +84,30 @@ export class PlacesService {
         }
       }, error => {
         console.log('Error while updating a city', error);
+
+        if (done != null) {
+          done(null, error);
+        }
+      });
+    }
+  }
+
+  public deleteCity(city: ICityDto, done: ((deletedCity: ICityDto, error: any) => void) = null) {
+    const foundAtIndex = this.cities.findIndex(c => c.id === city.id);
+
+    if (foundAtIndex === -1) {
+      if (done != null) {
+        done(null, `City with ID=${city.id} not found locally so cannot delete it. Try refreshing the local cache and try again.`);
+      }
+    } else {
+      this.http.delete(`/api/cities/${city.id}`).subscribe(() => {
+        this.cities.splice(foundAtIndex, 1);
+
+        if (done != null) {
+          done(city, null);
+        }
+      }, error => {
+        console.log('Error while deleting a city', error);
 
         if (done != null) {
           done(null, error);

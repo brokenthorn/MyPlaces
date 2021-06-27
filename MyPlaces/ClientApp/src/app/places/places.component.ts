@@ -1,3 +1,4 @@
+import {HttpErrorResponse} from '@angular/common/http';
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Loader} from '@googlemaps/js-api-loader';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
@@ -148,9 +149,9 @@ export class PlacesComponent implements OnInit, AfterViewInit {
 
   private addNewCity(city: ICityDto) {
     city.id = v4();
-    this.placesService.addCity(city, (newCity, error) => {
+    this.placesService.addCity(city, (newCity, error: HttpErrorResponse) => {
       if (!newCity) {
-        alert(`Nu am putut salva orașul: ${error}`);
+        alert(`Nu am putut salva orașul: ${error.message}`);
       } else {
         this.selectCity(newCity);
       }
@@ -158,11 +159,21 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   }
 
   private updateCity(city: ICityDto) {
-    this.placesService.updateCity(city, (updatedCity, error) => {
+    this.placesService.updateCity(city, (updatedCity, error: HttpErrorResponse) => {
       if (!updatedCity) {
-        alert(`Nu am putut actualiza orașul: ${error}`);
+        alert(`Nu am putut actualiza orașul: ${error.message}`);
       } else {
         this.selectCity(updatedCity);
+      }
+    });
+  }
+
+  private deleteCity(city: ICityDto) {
+    this.placesService.deleteCity(city, (deletedCity, error: HttpErrorResponse) => {
+      if (!deletedCity) {
+        alert(`Nu am putut șterge orașul: ${error.message}`);
+      } else {
+        this.selectCity(null);
       }
     });
   }
@@ -180,20 +191,21 @@ export class PlacesComponent implements OnInit, AfterViewInit {
     this.gMarkers.length = 0;
   }
 
+  showCityDeleteConfirmation(city: ICityDto) {
+    // TODO: Implement delete confirmation
+    this.deleteCity((city));
+  }
+
   showModalForAdd() {
     const modalRef = this.modalService.open(AddEditCityModalContentComponent, {size: 'lg', scrollable: true});
     modalRef.componentInstance.title = 'Oraș nou';
-    modalRef.closed.subscribe((city: ICityDto) => {
-      this.addNewCity(city);
-    });
+    modalRef.closed.subscribe((city: ICityDto) => this.addNewCity(city));
   }
 
   showModalForEdit() {
     const modalRef = this.modalService.open(AddEditCityModalContentComponent, {size: 'lg', scrollable: true});
     modalRef.componentInstance.title = this.selectedCity.name;
     modalRef.componentInstance.city = this.selectedCity;
-    modalRef.closed.subscribe((city: ICityDto) => {
-      this.updateCity(city);
-    });
+    modalRef.closed.subscribe((city: ICityDto) => this.updateCity(city));
   }
 }

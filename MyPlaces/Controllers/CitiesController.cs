@@ -82,7 +82,7 @@ namespace MyPlaces.Controllers
             catch (Exception ex) { return Problem(ex.Message); }
         }
 
-        [HttpDelete("id:guid")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteCity(Guid id, CancellationToken cancellationToken = default)
         {
             try

@@ -1,14 +1,13 @@
-<div class="row">
+<div class="row mb-3">
   <div class="col">
     <h4>Places</h4>
   </div>
-  <div class="col-auto p-0">
-    <div class="btn-group btn-group-sm" role="group">
+  <div class="col-auto">
+    <div class="btn-group btn-group-sm mr-1" role="group">
       <button class="btn btn-primary" (click)="showModalForAdd()">Adaugă</button>
       <button [disabled]="!selectedCity" class="btn btn-secondary" (click)="showModalForEdit()">Editează</button>
+      <button [disabled]="!selectedCity" class="btn btn-danger" (click)="showCityDeleteConfirmation(selectedCity)">Șterge</button>
     </div>
-  </div>
-  <div class="col-auto">
     <button (click)="refreshAll()"
             [attr.disabled]="isRefreshing ? true : undefined"
             class="btn btn-sm btn-success">
