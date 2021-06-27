@@ -1,32 +1,33 @@
 <header>
   <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']" title="Fetita mea Diana mi-a cerut sa pun si niste iepurasi pe aici...">
-        <img src="/favicon.svg"
+      <a [routerLink]="['/']" class="navbar-brand"
+         title="Fiica mea Diana mi-a cerut să pun și câțiva iepurași pe aici...">
+        <img alt="Logo"
              class="mr-1"
              height="30"
-             alt="Logo" />
+             src="/favicon.svg"/>
         MyPlaces
       </a>
-      <button class="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              data-target=".navbar-collapse"
-              aria-label="Toggle navigation"
+      <button (click)="toggle()"
               [attr.aria-expanded]="isExpanded"
-              (click)="toggle()">
+              aria-label="Toggle navigation"
+              class="navbar-toggler"
+              data-target=".navbar-collapse"
+              data-toggle="collapse"
+              type="button">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end"
-           [ngClass]="{ show: isExpanded }">
+      <div [ngClass]="{ show: isExpanded }"
+           class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
         <ul class="navbar-nav flex-grow">
-          <li class="nav-item"
+          <li [routerLinkActiveOptions]="{ exact: true }"
               [routerLinkActive]="['link-active']"
-              [routerLinkActiveOptions]="{ exact: true }">
-            <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
+              class="nav-item">
+            <a [routerLink]="['/']" class="nav-link text-dark">Acasă</a>
           </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/places']">Places</a>
+          <li [routerLinkActive]="['link-active']" class="nav-item">
+            <a [routerLink]="['/places']" class="nav-link text-dark">Locații</a>
           </li>
         </ul>
       </div>

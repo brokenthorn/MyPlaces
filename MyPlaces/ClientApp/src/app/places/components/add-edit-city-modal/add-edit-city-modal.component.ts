@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ICityDto } from '../../../../models';
-import { v4 } from 'uuid';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ICityDto} from '../../../../models';
+import {v4} from 'uuid';
 
 @Component({
   selector: 'app-add-edit-city-modal',
@@ -9,7 +9,7 @@ import { v4 } from 'uuid';
 })
 export class AddEditCityModalComponent {
   @Input() city?: ICityDto;
-  @Input() modalId: string = "modal";
+  @Input() modalId: string = 'modal';
 
   @Output('save') saveEvent = new EventEmitter<ICityDto>();
 
@@ -18,18 +18,19 @@ export class AddEditCityModalComponent {
   longitude = 0;
   latitude = 0;
 
-  constructor() { }
-
-  private resetFields() {
-    this.id = '';
-    this.name = '';
-    this.longitude = 0;
-    this.latitude = 0;
+  constructor() {
   }
 
   onSubmit(value: ICityDto) {
     value.id = v4();
     this.saveEvent.emit(value);
     this.resetFields();
+  }
+
+  private resetFields() {
+    this.id = '';
+    this.name = '';
+    this.longitude = 0;
+    this.latitude = 0;
   }
 }

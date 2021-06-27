@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Loader } from '@googlemaps/js-api-loader';
-import { ICityDto, IGMPlaceDto } from '../../models';
-import { PlacesService } from '../services/places.service';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Loader} from '@googlemaps/js-api-loader';
+import {ICityDto, IGMPlaceDto} from '../../models';
+import {PlacesService} from '../services/places.service';
 
 @Component({
   selector: 'app-places',
@@ -20,51 +20,35 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   });
 
   @ViewChild('googleMapDiv') mapDiv: ElementRef<HTMLDivElement>;
+  isRefreshing = false;
+  selectedCity: ICityDto;
+  selectedPlace: IGMPlaceDto;
+  cities: ICityDto[] = [];
+  places: IGMPlaceDto[] = [];
+  showAddEditCityModal = false;
+  isMaximized = false;
   private gMap: google.maps.Map;
   private gPlacesService: google.maps.places.PlacesService;
   private gMarkers: google.maps.Marker[] = [];
 
-  isRefreshing: boolean = false;
-
-  selectedCity: ICityDto;
-  selectedPlace: IGMPlaceDto;
-
-  cities: ICityDto[] = [];
-  places: IGMPlaceDto[] = [];
-
-  showAddEditCityModal: boolean = false;
-  isMaximized: boolean = false;
-
-  constructor(private placesService: PlacesService) { }
+  constructor(private placesService: PlacesService) {
+  }
 
   ngOnInit(): void {
+    // this sets by reference once so use the service to add/remove items!
+    this.cities = this.placesService.cities;
+    this.places = this.placesService.gmPlaces;
+
     this.refreshAll();
   }
 
   ngAfterViewInit(): void {
     PlacesComponent.loader.load().then(
       () => {
-        this.gMap = new google.maps.Map(this.mapDiv.nativeElement, { zoom: PlacesComponent.ZoomToCityLevel });
+        this.gMap = new google.maps.Map(this.mapDiv.nativeElement, {zoom: PlacesComponent.ZoomToCityLevel});
         this.gPlacesService = new google.maps.places.PlacesService(this.gMap);
 
-        const uluru = { lat: -25.344, lng: 131.036 };
-
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            const coords: google.maps.LatLngLiteral = {
-              lat: pos.coords.latitude,
-              lng: pos.coords.longitude
-            };
-
-            this.gMap.setCenter(coords);
-            this.createMapMarker(coords);
-          },
-          (geolocationError) => {
-            console.error('The user did not approve getting his location, the map will focus on a default location.', geolocationError);
-
-            this.gMap.setCenter(uluru);
-            this.createMapMarker(uluru);
-          });
+        this.resetMapPositionToDefault();
       },
       (reason) => {
         this.mapDiv.nativeElement.innerHTML = `
@@ -84,39 +68,52 @@ export class PlacesComponent implements OnInit, AfterViewInit {
       });
   }
 
-  private createMapMarker(pos: google.maps.LatLngLiteral | google.maps.LatLng) {
-    if (this.gMap != null) {
-      this.gMarkers.push(new google.maps.Marker({ position: pos, map: this.gMap }));
-    } else {
-      console.warn('Cannot create a map marker, no Google Map loaded');
-    }
-  }
+  private resetMapPositionToDefault() {
+    const uluru = { lat: -25.344, lng: 131.036 };
 
-  private clearMapMarkers() {
-    this.gMarkers.forEach(marker => marker.setMap(null));
-    this.gMarkers.splice(0, this.gMarkers.length);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const coords: google.maps.LatLngLiteral = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        };
+
+        this.gMap.setCenter(coords);
+        this.createMapMarker(coords);
+      },
+      (geolocationError) => {
+        console.error('The user did not approve getting his location, the map will focus on a default location.', geolocationError);
+
+        this.gMap.setCenter(uluru);
+        this.createMapMarker(uluru);
+      });
   }
 
   refreshAll() {
     this.isRefreshing = true;
 
-    this.placesService.refreshAll(() => {
-      this.isRefreshing = false;
-
-      // this sets by reference so use the service to add/remove items!
-      this.cities = this.placesService.cities;
-      this.places = this.placesService.gmPlaces;
-    });
+    this.placesService.refreshAll(() => this.isRefreshing = false);
+    this.selectCity(null);
+    this.resetMapPositionToDefault();
   }
 
-  selectCity(selectedCity: ICityDto) {
-    this.selectedCity = selectedCity;
-    this.selectedPlace = null;
+  selectCity(city: ICityDto) {
+    if (city == null) {
+      this.clearMapMarkers();
+
+      this.selectedCity = null;
+      this.selectPlace(null);
+
+      return;
+    }
+
+    this.selectedCity = city;
+    this.selectPlace(null);
 
     this.clearMapMarkers();
 
     this.gPlacesService.findPlaceFromQuery(
-      { query: this.selectedCity.name, fields: ['name', 'geometry'] },
+      {query: this.selectedCity.name, fields: ['name', 'geometry']},
       (results, status) => {
         console.log('Show search results on the map');
 
@@ -130,8 +127,8 @@ export class PlacesComponent implements OnInit, AfterViewInit {
     );
   }
 
-  selectPlace(selectedPlace: IGMPlaceDto) {
-    this.selectedPlace = selectedPlace;
+  selectPlace(place: IGMPlaceDto) {
+    this.selectedPlace = place;
   }
 
   onAddCityClick() {
@@ -145,11 +142,33 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   addNewCity(city: ICityDto) {
     this.placesService.addCity(city, (newCity, error) => {
       if (!newCity) {
-        alert(`Nu am putut salva orasul: ${error}`);
-      }
-      else {
+        alert(`Nu am putut salva orașul: ${error}`);
+      } else {
         this.selectCity(newCity);
       }
     });
+  }
+
+  updateCity(city: ICityDto) {
+    this.placesService.updateCity(city, (updatedCity, error) => {
+      if (!updatedCity) {
+        alert(`Nu am putut actualiza orașul: ${error}`);
+      } else {
+        this.selectCity(updatedCity);
+      }
+    });
+  }
+
+  private createMapMarker(pos: google.maps.LatLngLiteral | google.maps.LatLng) {
+    if (this.gMap != null) {
+      this.gMarkers.push(new google.maps.Marker({position: pos, map: this.gMap}));
+    } else {
+      console.warn('Cannot create a map marker, no Google Map loaded');
+    }
+  }
+
+  private clearMapMarkers() {
+    this.gMarkers.forEach(marker => marker.setMap(null));
+    this.gMarkers.splice(0, this.gMarkers.length);
   }
 }

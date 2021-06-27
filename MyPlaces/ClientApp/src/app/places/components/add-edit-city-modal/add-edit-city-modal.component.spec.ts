@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AddEditCityModalComponent } from './add-edit-city-modal.component';
+import {AddEditCityModalComponent} from './add-edit-city-modal.component';
 
 describe('AddEditCityModalComponent', () => {
   let component: AddEditCityModalComponent;
@@ -8,9 +8,9 @@ describe('AddEditCityModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AddEditCityModalComponent ]
+      declarations: [AddEditCityModalComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

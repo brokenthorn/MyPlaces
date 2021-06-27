@@ -1,34 +1,39 @@
 <div class="row">
   <div class="col">
-    <h2>Places</h2>
+    <h4>Places</h4>
   </div>
-  <div class="col-auto">
-    <div class="btn-group" role="group">
-      <button class="btn btn-primary" data-toggle="modal" data-target="#addEditCityModal">Adauga</button>
-      <button class="btn btn-success"
-              (click)="refreshAll()"
-              [attr.disabled]="isRefreshing ? true : undefined">
-        {{ isRefreshing ? 'Refreshing...' : 'Refresh' }}
+  <div class="col-auto p-0">
+    <div class="btn-group btn-group-sm" role="group">
+      <button class="btn btn-primary" data-target="#addEditCityModal" data-toggle="modal">Adaugă</button>
+      <button [disabled]="!selectedCity" class="btn btn-secondary" data-target="#addEditCityModal" data-toggle="modal">
+        Editează
       </button>
     </div>
+  </div>
+  <div class="col-auto">
+    <button (click)="refreshAll()"
+            [attr.disabled]="isRefreshing ? true : undefined"
+            class="btn btn-sm btn-success">
+      {{ isRefreshing ? '⌛' : '🗘' }}
+    </button>
   </div>
 </div>
 
 <div class="row">
   <div class="col">
-    <label for="city">Oras</label>
+    <label for="city">Oraș</label>
     <div class="input-group mb-3">
-      <select *ngIf="cities.length > 0 else noCitiesLoaded"
+      <select (ngModelChange)="selectCity($event)"
+              *ngIf="cities.length > 0 else noCitiesLoaded"
               [ngModel]="selectedCity"
-              (ngModelChange)="selectCity($event)"
               class="form-control"
               id="city">
-        <option [ngValue]="undefined" disabled>Alege un oras</option>
+        <option [ngValue]="null" disabled>Alege un oraș</option>
         <option *ngFor="let c of cities" [ngValue]="c">{{ c.name }}</option>
       </select>
       <ng-template #noCitiesLoaded>
-        <select class="form-control" id="city">
-          <option selected>Nici un oras</option>
+        <select class="form-control">
+          <option selected>Nici un oraș</option>
         </select>
       </ng-template>
     </div>
@@ -37,17 +42,17 @@
 
 <div class="row">
   <div class="col">
-    <label for="placesSearchInput">Locatii</label>
+    <label for="placesSearchInput">Locații</label>
     <div class="input-group mb-1">
       <div class="input-group-prepend">
         <span class="input-group-text">&#x2315;</span>
       </div>
-      <input class="form-control"
-             type="text"
+      <input [attr.disabled]="places.length > 0 ? undefined : true"
+             class="form-control"
              id="placesSearchInput"
              name="placesSearchInput"
-             placeholder="Cauta locatii..."
-             [attr.disabled]="places.length > 0 ? undefined : true" />
+             placeholder="Caută locații"
+             type="text"/>
     </div>
   </div>
 </div>
@@ -55,17 +60,17 @@
 <div class="row">
   <div class="col">
     <div class="input-group mb-3">
-      <select *ngIf="places.length > 0 else noPlacesLoaded"
+      <select (ngModelChange)="selectPlace($event)"
+              *ngIf="places.length > 0 else noPlacesLoaded"
               [ngModel]="selectedPlace"
-              (ngModelChange)="selectPlace($event)"
-              size="4"
               class="form-control"
-              id="place">
+              id="place"
+              size="4">
         <option *ngFor="let p of places" [ngValue]="p">{{ p.name }}</option>
       </select>
       <ng-template #noPlacesLoaded>
-        <select class="form-control" id="place">
-          <option selected>Nici o locatie</option>
+        <select class="form-control">
+          <option selected>Nici o locație</option>
         </select>
       </ng-template>
     </div>
@@ -75,12 +80,13 @@
 <div class="row">
   <div class="col">
     <div class="d-flex flex-column" style="max-height: calc(100vh - 1em);">
-      <div #googleMapDiv class="google-map flex-grow-1" [ngClass]="isMaximized ? 'vh-100' : undefined"></div>
+      <div #googleMapDiv [ngClass]="isMaximized ? 'vh-100' : undefined" class="google-map flex-grow-1"></div>
       <p class="mt-1 mb-3" style="line-height: 0.8em !important">
         <em>
           <small>
-            Poti redimensiona harta din coltul din dreapta jos cand nu e maximizata.
-            <u class="text-nowrap" (click)="toggleMapSize()">Click aici pentru {{ isMaximized ? 'minimizare' : 'maximizare' }}.</u>
+            Poți redimensiona harta din colțul din dreapta jos, când nu este maximizată.
+            <u (click)="toggleMapSize()" class="text-nowrap">Click aici
+              pentru {{ isMaximized ? 'minimizare' : 'maximizare' }}.</u>
           </small>
         </em>
       </p>
@@ -88,7 +94,8 @@
   </div>
 </div>
 
-<app-add-edit-city-modal [city]="selectedCity"
-                         [modalId]="'addEditCityModal'"
-                         (save)="addNewCity($event)">
+<app-add-edit-city-modal (save)="addNewCity($event)"
+                         (update)="updateCity($event)"
+                         [city]="selectedCity"
+                         [modalId]="'addEditCityModal'">
 </app-add-edit-city-modal>
