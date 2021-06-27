@@ -147,6 +147,7 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   }
 
   private addNewCity(city: ICityDto) {
+    city.id = v4();
     this.placesService.addCity(city, (newCity, error) => {
       if (!newCity) {
         alert(`Nu am putut salva orașul: ${error}`);
@@ -166,15 +167,6 @@ export class PlacesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onModalSave(city: ICityDto) {
-    if (city.id === '') {
-      city.id = v4();
-      this.addNewCity(city);
-    } else {
-      this.updateCity(city);
-    }
-  }
-
   private createMapMarker(pos: google.maps.LatLngLiteral | google.maps.LatLng) {
     if (this.gMap != null) {
       this.gMarkers.push(new google.maps.Marker({position: pos, map: this.gMap}));
@@ -189,13 +181,19 @@ export class PlacesComponent implements OnInit, AfterViewInit {
   }
 
   showModalForAdd() {
-    const modalRef = this.modalService.open(AddEditCityModalContentComponent);
+    const modalRef = this.modalService.open(AddEditCityModalContentComponent, {size: 'lg', scrollable: true});
     modalRef.componentInstance.title = 'Oraș nou';
+    modalRef.closed.subscribe((city: ICityDto) => {
+      this.addNewCity(city);
+    });
   }
 
   showModalForEdit() {
-    const modalRef = this.modalService.open(AddEditCityModalContentComponent);
+    const modalRef = this.modalService.open(AddEditCityModalContentComponent, {size: 'lg', scrollable: true});
     modalRef.componentInstance.title = this.selectedCity.name;
     modalRef.componentInstance.city = this.selectedCity;
+    modalRef.closed.subscribe((city: ICityDto) => {
+      this.updateCity(city);
+    });
   }
 }

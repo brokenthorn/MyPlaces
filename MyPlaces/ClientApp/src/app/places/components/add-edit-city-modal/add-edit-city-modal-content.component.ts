@@ -7,7 +7,13 @@ import {ICityDto} from '../../../../models';
   templateUrl: './add-edit-city-modal-content.component.html'
 })
 export class AddEditCityModalContentComponent implements OnInit {
-  @Input() city: ICityDto;
+  @Input() city: ICityDto = {
+    id: '',
+    name: '',
+    longitude: 0,
+    latitude: 0
+  };
+
   @Input() title: string;
 
   constructor(public activeModal: NgbActiveModal) {
@@ -16,7 +22,7 @@ export class AddEditCityModalContentComponent implements OnInit {
   ngOnInit() {
   }
 
-  submit(value: ICityDto) {
-    this.activeModal.dismiss('Submit click');
+  submit(city: ICityDto) {
+    this.activeModal.close(city);
   }
 }
